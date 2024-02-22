@@ -1,0 +1,16 @@
+{
+  "name": "burn-session",
+  "version": "1.0.0",
+  "description": "CSPR Burn Session ============",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "casper-js-sdk": "^2.15.4",
+    "ts-node": "^10.9.2"
+  }
+}
