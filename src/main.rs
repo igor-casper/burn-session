@@ -3,23 +3,35 @@
 
 extern crate alloc;
 
-use alloc::vec;
-use casper_contract::contract_api::{account, runtime, system};
-use casper_types::{runtime_args, RuntimeArgs};
+use casper_contract::{
+    contract_api::{account, runtime, system},
+    unwrap_or_revert::UnwrapOrRevert,
+};
+use casper_types::{runtime_args, RuntimeArgs, U512};
 
 pub const BURN_ENTRYPOINT: &str = "burn";
-pub const ARG_PURSES: &str = "purses";
+pub const ARG_PURSE: &str = "purse";
+pub const ARG_AMOUNT : &str = "amount";
 
 #[no_mangle]
 pub extern "C" fn call() {
+    let system_purse = system::create_purse();
     let caller_purse = account::get_main_purse();
-    let burn_purses = vec![caller_purse];
+    let amount: U512 = runtime::get_named_arg(ARG_AMOUNT);
+
+    system::transfer_from_purse_to_purse(
+        caller_purse,
+        system_purse,
+        amount,
+        None
+    ).unwrap_or_revert();
 
     let _: () = runtime::call_contract(
         system::get_mint(),
         BURN_ENTRYPOINT,
         runtime_args! {
-            ARG_PURSES => burn_purses
+            ARG_PURSE => system_purse,
+            ARG_AMOUNT => amount,
         },
     );
 }
